@@ -1,7 +1,5 @@
 # %%
-# @orr :
-# This challenge is a fantastic idea, and everything from your mini-lectures to the attentive support from TopCoder has been really well organized, documented, and executed.  I hope this challenge serves as a template for many more open science projects! 
-# Considering your goal of using the winning results from Challenge 1 to pick new genes for knockout and assay in Challenge 2, I would suggest augmenting/replacing the L1 loss with a scoring function that accounts for uncertainty in both the prediction and in the observed distribution of states, like KL divergence.  
+# Considering the over-arching goal of using the results from all 3 Challenges to pick new genes for knockout and assay in Challenge 2, I would suggest augmenting/replacing the L1 loss with a scoring function that accounts for uncertainty in both the prediction and in the observed distribution of states, like KL divergence.
 # To illustrate this, I'll use the scoring example from Challenge 1 Overview, where scoring with L1 loss = 0.06 between the observed and predicted proportions assumes equal uncertinaty among the 5 proportions, so any other prediction with the same L1 loss would be considered equally good -- including (0.195, 0.105, 0.295, 0.040, 0.405) which can be interpreted as either slightly better for predicting the non-zero proportions of the "true"/observed distribution even closer, or  significantly worse for giving even 4% weight for the truly-zero proportion
 # However considering the large variance of state distributions among individual gRNAs targeting the same knockout (for genes like , I  
 # %%
@@ -122,6 +120,7 @@ sc.tl.pca(bdata, svd_solver='arpack')
 sc.pp.neighbors(bdata, n_neighbors=15, n_pcs=50)
 sc.tl.umap(bdata, min_dist=0.3)
 # %%
+from collections import Counter
 bdata.obs['KO_gene'] = ['val' if g in val_genes else 'test' if g in test_genes else 'train' if g in ko_genes else '???' for g in bdata.obs.index]
 Counter(bdata.obs.KO_gene)
 # %%
@@ -163,7 +162,7 @@ px.scatter(umap_df, x='UMAP_x', y='UMAP_y', hover_name='gene', color='KO_gene', 
 # %%
 umap_df.set_index('gene').loc[val_genes + test_genes, :]
 # %%
-umap_df.iloc[g2i.loc[val_genes + test_genes + closest_known_gene[]], :]
+#umap_df.iloc[g2i.loc[val_genes + test_genes + closest_known_gene[]], :]
 # %%
 sc.tl.tsne(bdata)
 #sc.pl.tsne(bdata, color=['KO_gene'], groups=['KO_gene'], palette='Accent', legend_loc='right margin')
